@@ -1,0 +1,2 @@
+﻿Dueño,Matrícula,Hora Entrada,Hora Salida,Tiempo de permanencia,Precio Total
+"Elena","dk876","2:19 p. m.","5:20 p. m.","3 horas y 1 minuto","$3.02"
