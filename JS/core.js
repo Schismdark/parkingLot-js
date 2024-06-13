@@ -45,7 +45,7 @@ class UI{
         const formContainer = document.querySelector('.form-container');
         const form = document.querySelector('#formEntrada');
         formContainer.insertBefore(div,form);
-        setTimeout(() => document.querySelector('.alert').remove(),15000);
+        setTimeout(() => document.querySelector('.alert').remove(),3000);
     }
     static validarTxts(){
         const duenio = document.querySelector('#duenio').value;
@@ -99,7 +99,6 @@ class Almac{
         if(!UI.validarTxts()){
             return;
         }
-        alert(horaEntrada);
         //Instanciando la clase datosEntrada
         const entrada = new datosEntrada(duenio, carro, matricula, horaEntrada);
         UI.agregarEntradaATabla(entrada);
