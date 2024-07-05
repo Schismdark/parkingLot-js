@@ -1,14 +1,118 @@
 //import { saveAs } from './JS/FileSaver.min.js';
-
+var exitModal = new bootstrap.Modal(document.getElementById('exitModal'));
+var editModal = new bootstrap.Modal(document.getElementById('editModal'));
 //Clase datosEntrada: Representa los datos del carro y su dueño para el parqueo
 class datosEntrada{
-    constructor(duenio, carro, matricula, horaEntrada){
+    constructor(indice, duenio, carro, matricula, horaEntrada, horaSalida, diff, costo, fechaEntrada, fechaSalida){
+        this.indice = indice;
         this.duenio = duenio;
         this.carro = carro;
         this.matricula = matricula; 
-        this.horaEntrada = horaEntrada; 
+        this.horaEntrada = horaEntrada;
+        this.horaSalida = horaSalida;
+        this.diff = diff;
+        this.costo = costo;
+        this.fechaEntrada = fechaEntrada;
+        this.fechaSalida = fechaSalida;
     }
+    static obtenerEntradaPorIndice(indice) {
+        const entradas = Almac.getEntradas();
+        return entradas.find(e => e.indice === indice);
+    }
+    static obtenerEntradas() {
+        let entradas;
+        if(localStorage.getItem('entradas') === null){
+            entradas = [];
+        } else {
+            entradas = JSON.parse(localStorage.getItem('entradas'));
+        }
+        return entradas;
+    }
+    static actualizarDuenio(indice, duenioNuevo) {
+        const entradas = datosEntrada.obtenerEntradas();
+        const entrada = entradas.find(entrada => entrada.indice === indice);
+        if(entrada){
+            entrada.duenio = duenioNuevo;
+        }
+        // Guarda el array de entradas actualizado en el localStorage
+        localStorage.setItem('entradas', JSON.stringify(entradas));
+    }
+
+    static actualizarCarro(indice, carroNuevo) {
+        const entradas = datosEntrada.obtenerEntradas();
+        const entrada = entradas.find(entrada => entrada.indice === indice);
+        if(entrada){
+            entrada.carro = carroNuevo;
+        }
+        localStorage.setItem('entradas', JSON.stringify(entradas));
+    }
+
+    static actualizarMatricula(indice, matriculaNueva) {
+        const entradas = datosEntrada.obtenerEntradas();
+        const entrada = entradas.find(entrada => entrada.indice === indice);
+        if(entrada){
+            entrada.matricula = matriculaNueva;
+        }
+        localStorage.setItem('entradas', JSON.stringify(entradas));
+    }
+
+    static actualizarHoraEntrada(indice, horaEntradaNueva) {
+        const entradas = datosEntrada.obtenerEntradas();
+        const entrada = entradas.find(entrada => entrada.indice === indice);
+        if(entrada){
+            entrada.horaEntrada = horaEntradaNueva;
+        }
+        localStorage.setItem('entradas', JSON.stringify(entradas));
+    }
+
+    static actualizarHoraSalida(indice, horaSalidaNueva) {
+        const entradas = datosEntrada.obtenerEntradas();
+        const entrada = entradas.find(entrada => entrada.indice === indice);
+        if(entrada){
+            entrada.horaSalida = horaSalidaNueva;
+        }
+        localStorage.setItem('entradas', JSON.stringify(entradas));
+    }
+
+    static actualizarDiff(indice, diffNuevo) {
+        const entradas = datosEntrada.obtenerEntradas();
+        const entrada = entradas.find(entrada => entrada.indice === indice);
+        if(entrada){
+            entrada.diff = diffNuevo;
+        }
+        localStorage.setItem('entradas', JSON.stringify(entradas));
+    }
+
+    static actualizarCosto(indice, costoNuevo) {
+        const entradas = datosEntrada.obtenerEntradas();
+        const entrada = entradas.find(entrada => entrada.indice === indice);
+        if(entrada){
+            entrada.costo = costoNuevo;
+        }
+        localStorage.setItem('entradas', JSON.stringify(entradas));
+    }
+
+    static actualizarFechaEntrada(indice, fechaEntradaNueva) {
+        const entradas = datosEntrada.obtenerEntradas();
+        const entrada = entradas.find(entrada => entrada.indice === indice);
+        if(entrada){
+            entrada.fechaEntrada = fechaEntradaNueva;
+        }
+        localStorage.setItem('entradas', JSON.stringify(entradas));
+    }
+
+    static actualizarFechaSalida(indice, fechaSalidaNueva) {
+        const entradas = datosEntrada.obtenerEntradas();
+        const entrada = entradas.find(entrada => entrada.indice === indice);
+        if(entrada){
+            entrada.fechaSalida = fechaSalidaNueva;
+        }
+        localStorage.setItem('entradas', JSON.stringify(entradas));
+    }
+    
 }
+//Inicializando tooltips de bootstrap
+
 //Clase UI: Maneja las tareas de interfaz de usuario
 class UI{
     static mostrarEntradas(){
@@ -19,11 +123,23 @@ class UI{
     static agregarEntradaATabla(entrada){
         const cuerpoTabla=document.querySelector('#tableBody');
         const fila = document.createElement('tr');
-        fila.innerHTML = `  <td>${entrada.duenio}</td>
-                            <td>${entrada.carro}</td>
-                            <td>${entrada.matricula}</td>
-                            <td>${entrada.horaEntrada}</td>
-                            <td><button class="btn btn-danger delete" data-bs-toggle="modal" data-bs-target="#exampleModal" >X</button></td>
+        fila.innerHTML = `  <td class="align-middle" id="indice">${entrada.indice}</td>
+                            <td class="align-middle" id="duenio">${entrada.duenio}</td>
+                            <td class="align-middle" id="carro">${entrada.carro}</td>
+                            <td class="align-middle" id="matricula">${entrada.matricula}</td>
+                            <td class="align-middle" id="hEntrada">${entrada.horaEntrada}</td>
+                            <td class="align-middle" id="hSalida">${entrada.horaSalida}</td>
+                            <td class="align-middle" id="diff">${entrada.diff}</td>
+                            <td class="align-middle" id="costo">${entrada.costo}</td>
+                            <td class="align-middle" id="fechaEntrada">${entrada.fechaEntrada}</td>
+                            <td class="align-middle" id="fechaSalida">${entrada.fechaSalida}</td>
+                            <td>
+                                <div class="d-flex gap-2 tltp">
+                                    <button type="button" class="btn btn-outline-success my-1 btn-sm edit"><i class="fa-solid fa-pen-to-square" id="edit"></i></button>
+                                    <button type="button" class="btn btn-outline-primary exit btn-sm my-1 data-bs-toggle="modal" data-bs-target="#exitModal" " ><i class="fa-solid fa-right-from-bracket" id="exit"></i></button>
+                                    <button class="btn btn-outline-danger btn-sm my-1 delete"><i class="fa-solid fa-xmark" id="delete"></i></button>
+                                </div>
+                            </td>
                         `;
         cuerpoTabla.appendChild(fila);
     }
@@ -34,8 +150,9 @@ class UI{
         txts.forEach((txt)=>txt.value="");
     }
     static borrarEntrada(target){
-        if(target.classList.contains('delete')){
-            target.parentElement.parentElement.remove();
+        if(target.id==='delete' || target.classList.contains('delete')){
+            const row = target.closest('tr');
+            row.remove();
         }
     }
     static mostrarAlert(mensaje,nombreClase){
@@ -45,6 +162,15 @@ class UI{
         const formContainer = document.querySelector('.form-container');
         const form = document.querySelector('#formEntrada');
         formContainer.insertBefore(div,form);
+        setTimeout(() => document.querySelector('.alert').remove(),3000);
+    }
+    static mostrarAlert2(mensaje,nombreClase){
+        const div = document.createElement('div');
+        div.className=`alert alert-${nombreClase} w-75 mx-auto py-1 text-center`;
+        div.appendChild(document.createTextNode(mensaje));
+        const elemento = document.querySelector('.table-container');
+        const etiqueta = document.querySelector('h5');
+        elemento.insertBefore(div,etiqueta);
         setTimeout(() => document.querySelector('.alert').remove(),3000);
     }
     static validarTxts(){
@@ -76,67 +202,55 @@ class Almac{
         entradas.push(entrada);
         localStorage.setItem('entradas', JSON.stringify(entradas));
     }
-    static removeEntradas(matricula){
+    static removeEntradas(indice){
         const entradas = Almac.getEntradas();
-        entradas.forEach((entrada,index) => {
-            if(entrada.matricula === matricula){
+        entradas.forEach((entrada, index) => {
+            if(entrada.indice === indice){
                 entradas.splice(index, 1);
             }
         });
         localStorage.setItem('entradas', JSON.stringify(entradas));
     }
 }
+
 //Evento Display o Load
-    document.addEventListener('DOMContentLoaded',UI.mostrarEntradas);
+document.addEventListener('DOMContentLoaded', ()=>{
+    UI.mostrarEntradas();
+});
 //Evento Agregar
+    var indiceAcumulador = 0;
     document.querySelector('#formEntrada').addEventListener('submit',(e)=>{
         e.preventDefault();
         
         const duenio = document.querySelector('#duenio').value;
         const carro = document.querySelector('#carro').value;
         const matricula = document.querySelector('#matricula').value;
+        const fechaEntrada = new Date().toLocaleDateString("es-ES",{day: '2-digit', month: '2-digit', year: '2-digit'});
         const horaEntrada = new Date().toLocaleTimeString('es-ES', { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'America/El_Salvador' });
         if(!UI.validarTxts()){
             return;
         }
         //Instanciando la clase datosEntrada
-        const entrada = new datosEntrada(duenio, carro, matricula, horaEntrada);
+        indiceAcumulador++;
+        const entrada = new datosEntrada(indiceAcumulador, duenio, carro, matricula, horaEntrada, '', '', 0, fechaEntrada, '');
         UI.agregarEntradaATabla(entrada);
         Almac.addEntradas(entrada);
         UI.limpiarTxts();
-        UI.mostrarAlert('Coche agregado con éxito al estacionamiento','success');
+        UI.mostrarAlert('Carro agregado con éxito al estacionamiento','success');
     });
-//Evento Remove
+//Evento Eliminar
     document.querySelector('#tableBody').addEventListener('click',(e)=>{
-        if (e.target.classList.contains('delete')) {
-            
-            var duennio = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
-            //Se obtiene le texto de la matrícula
-            var matricula = e.target.parentElement.previousElementSibling.previousElementSibling.textContent;
-            //Se obtiene el texto de la hora de entrada
-            var horaI = e.target.parentElement.previousElementSibling.textContent;
-            let horaSalida = new Date().toLocaleTimeString('es-ES', { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'America/El_Salvador' });
-            // Calcular el tiempo de permanencia
-            var tiempoPermanencia = calcularDiferenciaHorasMinutos(horaI, horaSalida);
-            //console.log(tiempoPermanencia);
-            // Calcular el costo basado en el tiempo de permanencia
-            var costoTotal = calcularCostoEstacionamiento(tiempoPermanencia);
-            document.getElementById('dueno').innerText = duennio;
-            document.getElementById('placa').innerText = matricula;
-            document.getElementById('hora-inicio').innerText = horaI;
-            document.getElementById('hora-final').innerText = horaSalida;
-            document.getElementById('horas-parqueadas').innerText = tiempoPermanencia;
-            document.getElementById('precio-total').innerText = "$"+costoTotal;
-            //UI.mostrarAlert(`dueño: ${duennio}\nMatrícula: ${matricula}\nHora de entrada: ${horaI}\nHora de salida: ${horaSalida}\nTiempo en el parqueo: ${tiempoPermanencia}\nCosto: $${costoTotal}`,'success');
+        if (e.target.id==='delete' || e.target.classList.contains('delete')) {
+            const row = e.target.closest('tr');
+            let indice = row.querySelector('#indice').textContent;
             //Elimina una fila
             UI.borrarEntrada(e.target);
-
             //Elimia el registro del almacenamiento
-            Almac.removeEntradas(matricula);
-            UI.mostrarAlert('Coche eliminado con éxito de la lista de estacionamiento','success');
+            Almac.removeEntradas(Number(indice));
+            UI.mostrarAlert2('Coche eliminado con éxito de la lista de estacionamiento','success');
         }
-    })
-
+    });
+    
 //Evento Buscar
     document.querySelector('#txtBuscar').addEventListener('keyup', function searchTable(){
         //Se obtiene el valor de la caja de texto
@@ -163,6 +277,57 @@ class Almac{
                 tablaLinea[i].style.display = 'none';
             }
         }
+    });
+//Evendo salida o despacho del carro
+    document.querySelector('#tableBody').addEventListener('click',(e)=>{
+        if (e.target.id === 'exit' || e.target.classList.contains('exit')) {
+
+            const row = e.target.closest('tr');
+            let boton = row.querySelector('.exit');
+            let indice = row.querySelector('#indice').textContent;
+            let duennio = row.querySelector('#duenio').textContent;
+            let matricula = row.querySelector('#matricula').textContent;
+            let horaI = row.querySelector('#hEntrada').textContent;
+            let fechaEntradaI = row.querySelector('#fechaEntrada').textContent;
+            let fechaSalida = new Date().toLocaleDateString("es-ES",{day: '2-digit', month: '2-digit', year: '2-digit'});
+            let horaSalida = new Date().toLocaleTimeString('es-ES', { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'America/El_Salvador' });
+            let tiempoPermanencia = calcularDiferenciaHorasMinutos(fechaEntradaI, horaI, fechaSalida, horaSalida);
+            let costoTotal = calcularCostoEstacionamiento(tiempoPermanencia);
+            let rHoraSalida = row.querySelector('#hSalida');
+            let rDiff = row.querySelector('#diff');
+            let rCosto = row.querySelector('#costo');
+            let rFechaSalida = row.querySelector('#fechaSalida');
+            exitModal.show();
+            if(rHoraSalida.textContent === '' || rDiff.textContent === '' || rCosto.textContent === '' || rFechaSalida.textContent === ''){
+
+                document.getElementById('dueno').innerText = duennio;
+                document.getElementById('placa').innerText = matricula;
+                document.getElementById('hora-inicio').innerText = horaI;
+                document.getElementById('hora-final').innerText = horaSalida;
+                document.getElementById('horas-parqueadas').innerText = tiempoPermanencia;
+                document.getElementById('precio-total').innerText = "$"+costoTotal;
+
+                rHoraSalida.textContent = horaSalida;
+                rDiff.textContent = tiempoPermanencia;
+                rCosto.textContent = "$"+costoTotal;
+                rFechaSalida.textContent = fechaSalida;
+                datosEntrada.actualizarHoraSalida(Number(indice), horaSalida);
+                datosEntrada.actualizarDiff(Number(indice), tiempoPermanencia);
+                datosEntrada.actualizarCosto(Number(indice), "$"+costoTotal);
+                datosEntrada.actualizarFechaSalida(Number(indice), fechaSalida);
+                
+                
+            } else {
+
+                document.getElementById('dueno').innerText = duennio;
+                document.getElementById('placa').innerText = matricula;
+                document.getElementById('hora-inicio').innerText = horaI;
+                document.getElementById('hora-final').innerText = row.querySelector('#hSalida').textContent;
+                document.getElementById('horas-parqueadas').innerText = row.querySelector('#diff').textContent;
+                document.getElementById('precio-total').innerText = row.querySelector('#costo').textContent;
+            }
+            //boton.setAttribute("disabled", "disabled");
+        };
     });
 //Evento exportar archivo csv
     document.getElementById('btnDescargar').addEventListener('click',()=>{
@@ -195,7 +360,57 @@ class Almac{
         saveAs(blob, 'test.csv');
         //downloadLink.href = URL.createObjectURL(blob);
         //downloadLink.click();
+        exitModal.hide();
     });
+//Evento Editar
+document.querySelector('#tableBody').addEventListener('click',(e)=>{
+    if (e.target.id === 'edit' || e.target.classList.contains('edit')) {
+        
+        editModal.show();
+        const row = e.target.closest('tr');
+        let indice = row.querySelector('#indice').textContent;
+        let duennio = row.querySelector('#duenio').textContent;
+        let carro = row.querySelector('#carro').textContent;
+        let matricula = row.querySelector('#matricula').textContent;
+        document.getElementById('txtIndice').value = indice;
+        document.getElementById('txtDuenio').value = duennio;
+        document.getElementById('txtCarro').value = carro;
+        document.getElementById('txtPlaca').value = matricula;
+    };
+});
+//Evento Actualizar
+document.getElementById('btnActualizar').addEventListener('click',()=>{
+    let indice = document.getElementById('txtIndice').value;
+    let duenio = document.getElementById('txtDuenio').value;
+    let carro = document.getElementById('txtCarro').value;
+    let matricula = document.getElementById('txtPlaca').value;
+    const tablaLineas = (document.querySelector('#tableBody')).querySelectorAll('tr');
+    tablaLineas.forEach(row => {
+        // Verificar si alguno de los <td> contiene el ID del registro
+        if (row.querySelector('td').textContent === indice) {
+          // Obtiene los valores actuales de los <td>
+            let duenioActual = row.querySelector('#duenio').textContent;
+            let carroActual = row.querySelector('#carro').textContent;
+            let matriculaActual = row.querySelector('#matricula').textContent;
+
+            // Compara los valores actuales con los valores modificados
+            if (duenio!== duenioActual || carro!== carroActual || matricula!== matriculaActual) {
+                // Si los valores han cambiado, actualiza los <td>
+                row.querySelector('#duenio').textContent = duenio;
+                row.querySelector('#carro').textContent = carro;
+                row.querySelector('#matricula').textContent = matricula;
+                datosEntrada.actualizarDuenio(Number(indice), duenio);
+                datosEntrada.actualizarCarro(Number(indice), carro);
+                datosEntrada.actualizarMatricula(Number(indice), matricula);
+            } else {
+                // Si los valores no han cambiado, no se realiza ninguna actualización
+                console.log("Los valores no han sido modificados.");
+            }
+        }
+      });
+      
+    editModal.hide();
+});
     function calcularCostoEstacionamiento(diferenciaHoras) {
         // Costo base por una hora será de 1 dólar o fracción si es hora y fracción o sólo fracción
         let matches = diferenciaHoras.match(/\d+/g);
@@ -212,28 +427,32 @@ class Almac{
         }
         return costoTotal.toFixed(2);
     }
-    function calcularDiferenciaHorasMinutos(horaInicio12H, horaFin12H) { 
+    function calcularDiferenciaHorasMinutos(fechaInicio, horaInicio12H, fechaFin, horaFin12H) { 
         // Extrae las horas y minutos de horaInicio
         const horaInicio = convertirAFormato24Horas(horaInicio12H);
         const horaFin = convertirAFormato24Horas(horaFin12H);
-        
+        const fInicio = fechaAObj(fechaInicio);
+        const fFin = fechaAObj(fechaFin);
+        const fechaHoraI = `${fInicio} ${horaInicio}:00`
+        const fechaHoraFin = `${fFin} ${horaFin}:00`
         //const [horaMinutos,...resto] = tiempoConAmPm.split(/\s+/);
-        const [hInicio, mInicio] = horaInicio.split(':'); 
-        const [hFin, mFin] = horaFin.split(':');
+        //const [hInicio, mInicio] = horaInicio.split(':'); 
+        //const [hFin, mFin] = horaFin.split(':');
         // Crea un nuevo objeto Date con solo horas y minutos para horaInicio
-        const fechaInicio = new Date(); 
-        const fechaFin = new Date();
-        fechaInicio.setHours(hInicio, mInicio);
-        fechaFin.setHours(hFin, mFin); 
+        const fechaInicioObj = new Date(fechaHoraI); 
+        const fechaFinObj = new Date(fechaHoraFin);
+        //fechaInicioObj.setHours(hInicio, mInicio);
+        //fechaFinObj.setHours(hFin, mFin); 
         // Calcula la diferencia en milisegundos
-        const milisegundosDiferencia = fechaFin.getTime() - fechaInicio.getTime(); // Convierte los milisegundos a horas y minutos
+        const milisegundosDiferencia = fechaFinObj.getTime() - fechaInicioObj.getTime(); // Convierte los milisegundos a horas y minutos
         const segundos = milisegundosDiferencia / 1000; 
         const horas = Math.floor(segundos / 3600); 
         const minutos = Math.floor((segundos % 3600) / 60); // Devuelve un objeto con la diferencia en horas y minutos
         let horaDiferencia;
         let strH, strM;
-        strH = horas == 1? "hora" : horas > 1? "horas" : "hora";
+        strH = horas == 1? "hora" : horas > 1 || horas == 0? "horas" : "hora";
         strM = minutos == 1? "minuto" : minutos > 1? "minutos" : "minuto";
+        
         horaDiferencia = `${horas} ${strH} y ${minutos} ${strM}`;
         return  horaDiferencia;
     }
@@ -270,13 +489,14 @@ class Almac{
         
         return `${hora24Horas}:${minuto}`;
     }
-    function getListItemSeparator(locale) {
-        const items = ['item1', 'item2', 'item3'];
-        const listFormatter = new Intl.ListFormat(locale);
-        const formattedList = listFormatter.format(items);
-        // Buscar el primer carácter después del último elemento de la lista
-        const separator = formattedList.lastIndexOf(',') + 1 === formattedList.length? '' : ',';
-        return separator;
+    function fechaAObj(fechaStr) {
+        const partesFecha = fechaStr.split("/");
+        const mes = partesFecha[1];
+        const anio = "20" + partesFecha[2];
+        const fechaObj = new Date(Date.UTC(anio, mes - 1, partesFecha[0]));
+        const fechaIso = fechaObj.toISOString();
+        const fechaFormateada = fechaIso.split('T');
+         return fechaFormateada[0];
     }
     
     
